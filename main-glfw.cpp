@@ -10,6 +10,7 @@ using namespace std;
 
 int th = 32;
 int ph = 8;
+int zh = 0;
 int asp = 1;
 int rotate_speed = 25;
 float zoom = 1.0;
@@ -60,6 +61,12 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   case GLFW_KEY_DOWN:
     ph += 2;
     break;
+  case GLFW_KEY_N:
+    zh += 2;
+    break;
+  case GLFW_KEY_M:
+    zh -= 2;
+    break;
   default:
     break;
   }
@@ -71,11 +78,12 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 static void display(GLFWwindow *window)
 {
   Initialize();
-  ifstream MyReadFile;
-  MyReadFile.open("main_wing_backup.txt");
-  float points[1024];
 
-  int i = 0;
+  ifstream MyReadFile;
+  MyReadFile.open("main.txt");
+  float pointsMain[1024];
+
+  int idxMain = 0;
   while (!MyReadFile.eof())
   {
     string point;
@@ -86,22 +94,58 @@ static void display(GLFWwindow *window)
 
     for (int j = 0; j < 3; j++)
     {
-      points[i] = out[j];
+      pointsMain[idxMain] = out[j];
       cout << out[j] << endl;
-      i++;
+      idxMain++;
     }
   }
 
-  GLuint vbo = 0;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, i * sizeof(float), points, GL_STATIC_DRAW);
+  MyReadFile.close();
 
-  GLuint vao = 0;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  GLuint mainbo = 0;
+  glGenBuffers(1, &mainbo);
+  glBindBuffer(GL_ARRAY_BUFFER, mainbo);
+  glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
+
+  GLuint mainao = 0;
+  glGenVertexArrays(1, &mainao);
+  glBindVertexArray(mainao);
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, mainbo);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+  MyReadFile.open("propeller.txt");
+  float pointsPropeller[1024];
+
+  int idxPropeller = 0;
+  while (!MyReadFile.eof())
+  {
+    string point;
+    float out[3];
+
+    getline(MyReadFile, point);
+    tokenize(point, ',', out);
+
+    for (int j = 0; j < 3; j++)
+    {
+      pointsPropeller[idxPropeller] = out[j];
+      cout << out[j] << endl;
+      idxPropeller++;
+    }
+  }
+
+  MyReadFile.close();
+
+  GLuint propellerbo = 0;
+  glGenBuffers(1, &propellerbo);
+  glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
+  glBufferData(GL_ARRAY_BUFFER, idxPropeller * sizeof(float), pointsPropeller, GL_STATIC_DRAW);
+
+  GLuint propellerao = 0;
+  glGenVertexArrays(1, &propellerao);
+  glBindVertexArray(propellerao);
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
   while (!glfwWindowShouldClose(window))
@@ -110,12 +154,16 @@ static void display(GLFWwindow *window)
 
     glRotatef(ph, 1, 0, 0);
     glRotatef(th, 0, 1, 0);
+    glRotatef(zh, 0, 0, 1);
 
     // wipe the drawing surface clear
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindVertexArray(vao);
+    glBindVertexArray(mainao);
+    glDrawArrays(GL_TRIANGLES, 0, idxMain);
 
-    glDrawArrays(GL_TRIANGLES, 0, i);
+    glRotatef(theta, 1.0, 0.0, 0.0);
+    glBindVertexArray(propellerao);
+    glDrawArrays(GL_TRIANGLES, 0, idxPropeller);
 
     // update other events like input handling
     glfwPollEvents();
@@ -124,6 +172,9 @@ static void display(GLFWwindow *window)
     glfwSwapBuffers(window);
 
     glfwSetKeyCallback(window, SpecialKey);
+
+    theta += rotate_speed;
+    theta %= 360;
   }
 }
 
