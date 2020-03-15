@@ -60,23 +60,28 @@ void Initialize()
 }
 
 void printHelp(){
-  printf("===============HELP MENU===============\n");
+  printf("===============HELP MENU===============\n\n");
+
+  printf("=====Zoom=====\n");
   printf("P : Zoom Out\n");
-  printf("O : Zoom In\n");
-  
+  printf("O : Zoom In\n\n");
+
+  printf("=====Rotate Model=====\n");
   printf("W : Rotate Model Upward\n");
   printf("S : Rotate Model Downward\n");
   printf("A : Rotate Model To The Left\n");
   printf("D : Rotate Model To The Right\n");
   printf("Q : Rotate Model Counter Clockwise\n");
-  printf("E : Rotate Model Clockwise\n");
+  printf("E : Rotate Model Clockwise\n\n");
 
+  printf("=====Colour Shader=====\n");
   printf("L : Turn On Colour Shader\n");
-  printf("K : Turn Off Colour Shader\n");
+  printf("K : Turn Off Colour Shader\n\n");
 
+  printf("=====Setting=====\n");
   printf("R : Reset View\n");
-  printf("H : Help Menu\n");
-  printf("\n\n");
+  printf("T : Reset Model\n");
+  printf("H : Help Menu\n\n");
 }
 
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -107,10 +112,10 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   case GLFW_KEY_W:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     break;
-  // case GLFW_KEY_R:
-  //   isShadersOn = false;
-  //   ModelMatrix = glm::mat4(1.0);
-  //   break;
+  case GLFW_KEY_T:
+    isShadersOn = false;
+    ModelMatrix = glm::mat4(1.0);
+    break;
   case GLFW_KEY_H:
     printHelp();
     break;
