@@ -59,15 +59,11 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
-  case GLFW_KEY_P:
-    if (isShadersOn)
-    {
-      isShadersOn = false;
-    }
-    else
-    {
-      isShadersOn = true;
-    }
+  case GLFW_KEY_K:
+    isShadersOn = false;
+    break;
+  case GLFW_KEY_L:
+    isShadersOn = true;
     break;
   default:
     break;
@@ -134,11 +130,8 @@ void display(GLFWwindow *window)
     glm::mat4 ModelMatrix = glm::mat4(1.0);
     glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
-    // Send our transformation to the currently bound shader,
-    // in the "MVP" uniform
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, mainbo);
     glVertexAttribPointer(
@@ -153,7 +146,6 @@ void display(GLFWwindow *window)
 
     glDisableVertexAttribArray(0);
 
-    // Swap buffers
     glfwSwapBuffers(window);
     glfwPollEvents();
 
