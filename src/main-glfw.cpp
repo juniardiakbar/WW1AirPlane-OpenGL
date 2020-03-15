@@ -69,22 +69,22 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   case GLFW_KEY_L:
     isShadersOn = true;
     break;
-  case GLFW_KEY_W:
+  case GLFW_KEY_D:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     break;
-  case GLFW_KEY_S:
+  case GLFW_KEY_A:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     break;
-  case GLFW_KEY_A:
+  case GLFW_KEY_E:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     break;
-  case GLFW_KEY_D:
+  case GLFW_KEY_Q:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     break;
-  case GLFW_KEY_Q:
+  case GLFW_KEY_S:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     break;
-  case GLFW_KEY_E:
+  case GLFW_KEY_W:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     break;
   default:
