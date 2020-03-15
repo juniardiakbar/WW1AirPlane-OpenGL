@@ -6,6 +6,7 @@
 #include <fstream>
 #include <glm/glm.hpp>
 #include "common/shader.hpp"
+#include "common/controls.hpp"
 
 using namespace std;
 using namespace glm;
@@ -20,6 +21,8 @@ int rotate_speed = 25;
 float zoom = 1.0;
 float dim = 1.0;
 int theta = 0;
+
+bool isShadersOn = false;
 
 void tokenize(string const &str, const char delim, float out[])
 {
@@ -40,7 +43,11 @@ void Initialize()
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  glClearColor(0.1, 0.1, 0.1, 0.0);
+  // Set the mouse at the center of the screen
+  glfwPollEvents();
+  glfwSetCursorPos(window, 1024/2, 768/2);
+
+  glClearColor(1, 1, 1, 0.0);
   glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
 
   glMatrixMode(GL_MODELVIEW);
@@ -51,17 +58,17 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
-  case GLFW_KEY_RIGHT:
+  case GLFW_KEY_W:
     th += 2;
     cout << "right" << endl;
     break;
-  case GLFW_KEY_LEFT:
+  case GLFW_KEY_A:
     th -= 2;
     break;
-  case GLFW_KEY_UP:
+  case GLFW_KEY_D:
     ph -= 2;
     break;
-  case GLFW_KEY_DOWN:
+  case GLFW_KEY_S:
     ph += 2;
     break;
   case GLFW_KEY_N:
@@ -69,6 +76,13 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     break;
   case GLFW_KEY_M:
     zh -= 2;
+    break;
+  case GLFW_KEY_P:
+    if(isShadersOn){
+      isShadersOn = false;
+    }else{
+      isShadersOn = true;
+    }
     break;
   default:
     break;
@@ -86,6 +100,7 @@ void display(GLFWwindow *window)
 
   // Create and compile our GLSL program from the shaders
   GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+  GLuint defaultID = LoadShaders("DefaultVertex.vertexshader", "DefaultFragment.fragmentshader");
 
   ifstream MyReadFile;
   MyReadFile.open("main.txt");
@@ -115,41 +130,21 @@ void display(GLFWwindow *window)
   glBindBuffer(GL_ARRAY_BUFFER, mainbo);
   glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
 
-  // MyReadFile.open("propeller.txt");
-  // float pointsPropeller[1024];
-
-  // int idxPropeller = 0;
-  // while (!MyReadFile.eof())
-  // {
-  //   string point;
-  //   float out[3];
-
-  //   getline(MyReadFile, point);
-  //   tokenize(point, ',', out);
-
-  //   for (int j = 0; j < 3; j++)
-  //   {
-  //     pointsPropeller[idxPropeller] = out[j];
-  //     cout << out[j] << endl;
-  //     idxPropeller++;
-  //   }
-  // }
-
-  // MyReadFile.close();
-
-  // GLuint propellerbo = 0;
-  // glGenBuffers(1, &propellerbo);
-  // glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
-  // glBufferData(GL_ARRAY_BUFFER, idxPropeller * sizeof(float), pointsPropeller, GL_STATIC_DRAW);
-  while (!glfwWindowShouldClose(window))
+  while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS)
   {
     Initialize();
 
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Use our shader
-    glUseProgram(programID);
+    if(isShadersOn){
+      // Use our shader
+      glUseProgram(programID);
+    }else{
+      glUseProgram(defaultID);
+    }
+
+    computeMatricesFromInputs();
 
     glRotatef(ph, 1, 0, 0);
     glRotatef(th, 0, 1, 0);
@@ -220,6 +215,11 @@ int main(void)
     glfwTerminate();
     return -1;
   }
+
+  // Ensure we can capture the escape key being pressed below
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    // Hide the mouse and enable unlimited mouvement
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   Initialize();
 
