@@ -59,6 +59,26 @@ void Initialize()
   glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
 }
 
+void printHelp(){
+  printf("===============HELP MENU===============\n");
+  printf("P : Zoom Out\n");
+  printf("O : Zoom In\n");
+  
+  printf("W : Rotate Model Upward\n");
+  printf("S : Rotate Model Downward\n");
+  printf("A : Rotate Model To The Left\n");
+  printf("D : Rotate Model To The Right\n");
+  printf("Q : Rotate Model Counter Clockwise\n");
+  printf("E : Rotate Model Clockwise\n");
+
+  printf("L : Turn On Colour Shader\n");
+  printf("K : Turn Off Colour Shader\n");
+
+  printf("R : Reset View\n");
+  printf("H : Help Menu\n");
+  printf("\n\n");
+}
+
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
@@ -91,6 +111,9 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   //   isShadersOn = false;
   //   ModelMatrix = glm::mat4(1.0);
   //   break;
+  case GLFW_KEY_H:
+    printHelp();
+    break;
   default:
     break;
   }
@@ -215,7 +238,7 @@ int main(void)
   }
 
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   Initialize();
 
@@ -225,3 +248,4 @@ int main(void)
 
   return 0;
 }
+
