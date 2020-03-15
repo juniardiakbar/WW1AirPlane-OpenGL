@@ -40,56 +40,38 @@ void tokenize(string const &str, const char delim, float out[])
 
 void Initialize()
 {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  // Set the mouse at the center of the screen
   glfwPollEvents();
-  glfwSetCursorPos(window, 1024/2, 768/2);
+  glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+
+  // // Enable depth test
+  // glEnable(GL_DEPTH_TEST);
+  // // Accept fragment if it closer to the camera than the former one
+  // glDepthFunc(GL_LESS);
+
+  // // Cull triangles which normal is not towards the camera
+  // glEnable(GL_CULL_FACE);
 
   glClearColor(1, 1, 1, 0.0);
   glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
 }
 
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
-  case GLFW_KEY_W:
-    th += 2;
-    cout << "right" << endl;
-    break;
-  case GLFW_KEY_A:
-    th -= 2;
-    break;
-  case GLFW_KEY_D:
-    ph -= 2;
-    break;
-  case GLFW_KEY_S:
-    ph += 2;
-    break;
-  case GLFW_KEY_N:
-    zh += 2;
-    break;
-  case GLFW_KEY_M:
-    zh -= 2;
-    break;
   case GLFW_KEY_P:
-    if(isShadersOn){
+    if (isShadersOn)
+    {
       isShadersOn = false;
-    }else{
+    }
+    else
+    {
       isShadersOn = true;
     }
     break;
   default:
     break;
   }
-
-  th %= 360;
-  ph %= 360;
 }
 
 void display(GLFWwindow *window)
@@ -100,7 +82,10 @@ void display(GLFWwindow *window)
 
   // Create and compile our GLSL program from the shaders
   GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
-  GLuint defaultID = LoadShaders("DefaultVertex.vertexshader", "DefaultFragment.fragmentshader");
+  GLuint defaultID = LoadShaders("SimpleVertexShader.vertexshader", "DefaultFragment.fragmentshader");
+
+  GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+  GLuint DefaultMatrixID = glGetUniformLocation(defaultID, "MVP");
 
   ifstream MyReadFile;
   MyReadFile.open("main.txt");
@@ -118,7 +103,6 @@ void display(GLFWwindow *window)
     for (int j = 0; j < 3; j++)
     {
       pointsMain[idxMain] = out[j];
-      cout << out[j] << endl;
       idxMain++;
     }
   }
@@ -130,43 +114,42 @@ void display(GLFWwindow *window)
   glBindBuffer(GL_ARRAY_BUFFER, mainbo);
   glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
 
-  while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS)
+  while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
   {
-    Initialize();
-
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if(isShadersOn){
-      // Use our shader
+    if (isShadersOn)
+    {
       glUseProgram(programID);
-    }else{
+    }
+    else
+    {
       glUseProgram(defaultID);
     }
 
     computeMatricesFromInputs();
+    glm::mat4 ProjectionMatrix = getProjectionMatrix();
+    glm::mat4 ViewMatrix = getViewMatrix();
+    glm::mat4 ModelMatrix = glm::mat4(1.0);
+    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
-    glRotatef(ph, 1, 0, 0);
-    glRotatef(th, 0, 1, 0);
-    glRotatef(zh, 0, 0, 1);
+    // Send our transformation to the currently bound shader,
+    // in the "MVP" uniform
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, mainbo);
     glVertexAttribPointer(
-        0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,        // size
-        GL_FLOAT, // type
-        GL_FALSE, // normalized?
-        0,        // stride
-        (void *)0 // array buffer offset
-    );
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0);
 
     glDrawArrays(GL_TRIANGLES, 0, idxMain);
-
-    // glRotatef(theta, 1.0, 0.0, 0.0);
-    // glBindVertexArray(propellerao);
-    // glDrawArrays(GL_TRIANGLES, 0, idxPropeller);
 
     glDisableVertexAttribArray(0);
 
@@ -175,9 +158,6 @@ void display(GLFWwindow *window)
     glfwPollEvents();
 
     glfwSetKeyCallback(window, SpecialKey);
-
-    theta += rotate_speed;
-    theta %= 360;
   }
 }
 
@@ -216,16 +196,13 @@ int main(void)
     return -1;
   }
 
-  // Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    // Hide the mouse and enable unlimited mouvement
+  glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   Initialize();
 
   display(window);
 
-  // Close OpenGL window and terminate GLFW
   glfwTerminate();
 
   return 0;
