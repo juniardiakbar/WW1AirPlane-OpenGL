@@ -134,7 +134,7 @@ void display(GLFWwindow *window)
 
   ifstream MyReadFile;
   MyReadFile.open("main.txt");
-  GLfloat pointsMain[1024];
+  GLfloat pointsMain[2048];
 
   int idxMain = 0;
   while (!MyReadFile.eof())
