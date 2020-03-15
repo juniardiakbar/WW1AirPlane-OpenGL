@@ -42,6 +42,9 @@ add_definitions(
 #main
 add_executable(main-glfw 
 	src/main-glfw.cpp
+	src/SimpleFragmentShader.fragmentshader
+	src/SimpleVertexShader.vertexshader
+	src/common/shader.cpp
 )
 target_link_libraries(main-glfw
 	${ALL_LIBS}

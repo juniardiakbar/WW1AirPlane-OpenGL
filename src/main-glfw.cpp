@@ -1,12 +1,16 @@
-#define GLEW_STATIC
-#include <GL/glew.h>    // include GLEW and new version of GL on Windows
-#include <GLFW/glfw3.h> // GLFW helper library
+#include <stdio.h>
+#include <stdlib.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <vector>
+#include <glm/glm.hpp>
+#include "common/shader.hpp"
 
 using namespace std;
+using namespace glm;
+
+GLFWwindow *window;
 
 int th = 32;
 int ph = 8;
@@ -16,8 +20,6 @@ int rotate_speed = 25;
 float zoom = 1.0;
 float dim = 1.0;
 int theta = 0;
-
-const char *gameTitle = "World War I Airplane Showcase";
 
 void tokenize(string const &str, const char delim, float out[])
 {
@@ -31,18 +33,6 @@ void tokenize(string const &str, const char delim, float out[])
     out[i] = stof(str.substr(start, end - start));
     i++;
   }
-}
-
-void Initialize()
-{
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  glClearColor(0.1, 0.1, 0.1, 0.0);
-  glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
 }
 
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -75,19 +65,64 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   ph %= 360;
 }
 
-static void display(GLFWwindow *window)
+int main(void)
 {
-  Initialize();
+  // Initialise GLFW
+  if (!glfwInit())
+  {
+    fprintf(stderr, "ERROR: could not start GLFW3\n");
+    return 1;
+  }
+
+  glfwWindowHint(GLFW_SAMPLES, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  window = glfwCreateWindow(800, 800, "World War I Airplane Showcase", NULL, NULL);
+
+  if (!window)
+  {
+    fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+    getchar();
+    glfwTerminate();
+    return -1;
+  }
+  glfwMakeContextCurrent(window);
+
+  // Initialize GLEW
+  glewExperimental = GL_TRUE; // Needed for core profile
+  if (glewInit() != GLEW_OK)
+  {
+    fprintf(stderr, "Failed to initialize GLEW\n");
+    getchar();
+    glfwTerminate();
+    return -1;
+  }
+
+  // Ensure we can capture the escape key being pressed below
+  glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+  // Dark blue background
+  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+
+  GLuint VertexArrayID;
+  glGenVertexArrays(1, &VertexArrayID);
+  glBindVertexArray(VertexArrayID);
+
+  // Create and compile our GLSL program from the shaders
+  GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
   ifstream MyReadFile;
   MyReadFile.open("main.txt");
-  float pointsMain[1024];
+  GLfloat pointsMain[1024];
 
   int idxMain = 0;
   while (!MyReadFile.eof())
   {
     string point;
-    float out[3];
+    GLfloat out[3];
 
     getline(MyReadFile, point);
     tokenize(point, ',', out);
@@ -102,112 +137,49 @@ static void display(GLFWwindow *window)
 
   MyReadFile.close();
 
-  GLuint mainbo = 0;
+  GLuint mainbo;
   glGenBuffers(1, &mainbo);
   glBindBuffer(GL_ARRAY_BUFFER, mainbo);
   glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
 
-  GLuint mainao = 0;
-  glGenVertexArrays(1, &mainao);
-  glBindVertexArray(mainao);
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, mainbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-  MyReadFile.open("propeller.txt");
-  float pointsPropeller[1024];
-
-  int idxPropeller = 0;
-  while (!MyReadFile.eof())
+  while (glfwWindowShouldClose(window) == 0)
   {
-    string point;
-    float out[3];
+    // Clear the screen
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    getline(MyReadFile, point);
-    tokenize(point, ',', out);
+    // Use our shader
+    glUseProgram(programID);
 
-    for (int j = 0; j < 3; j++)
-    {
-      pointsPropeller[idxPropeller] = out[j];
-      cout << out[j] << endl;
-      idxPropeller++;
-    }
-  }
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, mainbo);
+    glVertexAttribPointer(
+        0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,        // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        0,        // stride
+        (void *)0 // array buffer offset
+    );
 
-  MyReadFile.close();
+    // Draw the triangle !
+    glDrawArrays(GL_TRIANGLES, 0, idxMain); // 3 indices starting at 0 -> 1 triangle
 
-  GLuint propellerbo = 0;
-  glGenBuffers(1, &propellerbo);
-  glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
-  glBufferData(GL_ARRAY_BUFFER, idxPropeller * sizeof(float), pointsPropeller, GL_STATIC_DRAW);
+    glDisableVertexAttribArray(0);
 
-  GLuint propellerao = 0;
-  glGenVertexArrays(1, &propellerao);
-  glBindVertexArray(propellerao);
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-  while (!glfwWindowShouldClose(window))
-  {
-    Initialize();
-
-    glRotatef(ph, 1, 0, 0);
-    glRotatef(th, 0, 1, 0);
-    glRotatef(zh, 0, 0, 1);
-
-    // wipe the drawing surface clear
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindVertexArray(mainao);
-    glDrawArrays(GL_TRIANGLES, 0, idxMain);
-
-    glRotatef(theta, 1.0, 0.0, 0.0);
-    glBindVertexArray(propellerao);
-    glDrawArrays(GL_TRIANGLES, 0, idxPropeller);
-
-    // update other events like input handling
+    // Swap buffers
+    glfwSwapBuffers(window);
     glfwPollEvents();
 
-    // put the stuff we've been drawing onto the display
-    glfwSwapBuffers(window);
+  } // Check if the ESC key was pressed or the window was closed
 
-    glfwSetKeyCallback(window, SpecialKey);
+  // Cleanup VBO
+  glDeleteBuffers(1, &mainbo);
+  glDeleteVertexArrays(1, &VertexArrayID);
+  glDeleteProgram(programID);
 
-    theta += rotate_speed;
-    theta %= 360;
-  }
-}
-
-int main(int argc, char **argv)
-{
-  if (!glfwInit())
-  {
-    fprintf(stderr, "ERROR: could not start GLFW3\n");
-    return 1;
-  }
-
-  GLFWwindow *window = glfwCreateWindow(800, 800, "World War I Airplane Showcase", NULL, NULL);
-
-  if (!window)
-  {
-    fprintf(stderr, "ERROR: could not open window with GLFW3\n");
-    glfwTerminate();
-    return 1;
-  }
-  glfwMakeContextCurrent(window);
-
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
-
-  // tell GL to only draw onto a pixel if the shape is closer to the viewer
-  glEnable(GL_DEPTH_TEST); // enable depth-testing
-  glDepthFunc(GL_LESS);    // depth-testing interprets a smaller value as "closer"
-
-  /* OTHER STUFF GOES HERE NEXT */
-  Initialize();
-  display(window);
-
+  // Close OpenGL window and terminate GLFW
   glfwTerminate();
+
   return 0;
 }
