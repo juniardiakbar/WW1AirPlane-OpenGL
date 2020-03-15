@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "common/shader.hpp"
 #include "common/controls.hpp"
 
@@ -23,6 +25,8 @@ float dim = 1.0;
 int theta = 0;
 
 bool isShadersOn = false;
+
+glm::mat4 ModelMatrix = glm::mat4(1.0);;
 
 void tokenize(string const &str, const char delim, float out[])
 {
@@ -64,6 +68,24 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
     break;
   case GLFW_KEY_L:
     isShadersOn = true;
+    break;
+  case GLFW_KEY_W:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    break;
+  case GLFW_KEY_S:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    break;
+  case GLFW_KEY_A:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    break;
+  case GLFW_KEY_D:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    break;
+  case GLFW_KEY_Q:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    break;
+  case GLFW_KEY_E:
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     break;
   default:
     break;
@@ -127,7 +149,7 @@ void display(GLFWwindow *window)
     computeMatricesFromInputs();
     glm::mat4 ProjectionMatrix = getProjectionMatrix();
     glm::mat4 ViewMatrix = getViewMatrix();
-    glm::mat4 ModelMatrix = glm::mat4(1.0);
+    // glm::mat4 ModelMatrix = glm::mat4(1.0);
     glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
