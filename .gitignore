@@ -1,2 +1,9 @@
 /src/main-glfw
+/src/CMakeFiles
+/src/Makefile
+/src/CMakeCache.txt
+/src/CMakeDoxyfile.in
+/src/CMakeDoxygenDefaults.cmake
+/src/cmake_install.cmake
+/src/launch-main-glfw.sh
 /build
