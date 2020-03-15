@@ -35,12 +35,25 @@ void tokenize(string const &str, const char delim, float out[])
   }
 }
 
+void Initialize()
+{
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glClearColor(0.1, 0.1, 0.1, 0.0);
+  glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+}
+
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
   case GLFW_KEY_RIGHT:
     th += 2;
+    cout << "right" << endl;
     break;
   case GLFW_KEY_LEFT:
     th -= 2;
@@ -65,6 +78,114 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   ph %= 360;
 }
 
+void display(GLFWwindow *window)
+{
+  GLuint VertexArrayID;
+  glGenVertexArrays(1, &VertexArrayID);
+  glBindVertexArray(VertexArrayID);
+
+  // Create and compile our GLSL program from the shaders
+  GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+
+  ifstream MyReadFile;
+  MyReadFile.open("main.txt");
+  GLfloat pointsMain[1024];
+
+  int idxMain = 0;
+  while (!MyReadFile.eof())
+  {
+    string point;
+    float out[3];
+
+    getline(MyReadFile, point);
+    tokenize(point, ',', out);
+
+    for (int j = 0; j < 3; j++)
+    {
+      pointsMain[idxMain] = out[j];
+      cout << out[j] << endl;
+      idxMain++;
+    }
+  }
+
+  MyReadFile.close();
+
+  GLuint mainbo = 0;
+  glGenBuffers(1, &mainbo);
+  glBindBuffer(GL_ARRAY_BUFFER, mainbo);
+  glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
+
+  // MyReadFile.open("propeller.txt");
+  // float pointsPropeller[1024];
+
+  // int idxPropeller = 0;
+  // while (!MyReadFile.eof())
+  // {
+  //   string point;
+  //   float out[3];
+
+  //   getline(MyReadFile, point);
+  //   tokenize(point, ',', out);
+
+  //   for (int j = 0; j < 3; j++)
+  //   {
+  //     pointsPropeller[idxPropeller] = out[j];
+  //     cout << out[j] << endl;
+  //     idxPropeller++;
+  //   }
+  // }
+
+  // MyReadFile.close();
+
+  // GLuint propellerbo = 0;
+  // glGenBuffers(1, &propellerbo);
+  // glBindBuffer(GL_ARRAY_BUFFER, propellerbo);
+  // glBufferData(GL_ARRAY_BUFFER, idxPropeller * sizeof(float), pointsPropeller, GL_STATIC_DRAW);
+  while (!glfwWindowShouldClose(window))
+  {
+    Initialize();
+
+    // Clear the screen
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Use our shader
+    glUseProgram(programID);
+
+    glRotatef(ph, 1, 0, 0);
+    glRotatef(th, 0, 1, 0);
+    glRotatef(zh, 0, 0, 1);
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, mainbo);
+    glVertexAttribPointer(
+        0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,        // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        0,        // stride
+        (void *)0 // array buffer offset
+    );
+
+    glDrawArrays(GL_TRIANGLES, 0, idxMain);
+
+    // glRotatef(theta, 1.0, 0.0, 0.0);
+    // glBindVertexArray(propellerao);
+    // glDrawArrays(GL_TRIANGLES, 0, idxPropeller);
+
+    glDisableVertexAttribArray(0);
+
+    // Swap buffers
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+
+    glfwSetKeyCallback(window, SpecialKey);
+
+    theta += rotate_speed;
+    theta %= 360;
+  }
+}
+
 int main(void)
 {
   // Initialise GLFW
@@ -84,10 +205,9 @@ int main(void)
 
   if (!window)
   {
-    fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
-    getchar();
+    fprintf(stderr, "ERROR: could not open window with GLFW3\n");
     glfwTerminate();
-    return -1;
+    return 1;
   }
   glfwMakeContextCurrent(window);
 
@@ -101,82 +221,9 @@ int main(void)
     return -1;
   }
 
-  // Ensure we can capture the escape key being pressed below
-  glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+  Initialize();
 
-  // Dark blue background
-  glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-
-  GLuint VertexArrayID;
-  glGenVertexArrays(1, &VertexArrayID);
-  glBindVertexArray(VertexArrayID);
-
-  // Create and compile our GLSL program from the shaders
-  GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
-
-  ifstream MyReadFile;
-  MyReadFile.open("main.txt");
-  GLfloat pointsMain[1024];
-
-  int idxMain = 0;
-  while (!MyReadFile.eof())
-  {
-    string point;
-    GLfloat out[3];
-
-    getline(MyReadFile, point);
-    tokenize(point, ',', out);
-
-    for (int j = 0; j < 3; j++)
-    {
-      pointsMain[idxMain] = out[j];
-      cout << out[j] << endl;
-      idxMain++;
-    }
-  }
-
-  MyReadFile.close();
-
-  GLuint mainbo;
-  glGenBuffers(1, &mainbo);
-  glBindBuffer(GL_ARRAY_BUFFER, mainbo);
-  glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
-
-  while (glfwWindowShouldClose(window) == 0)
-  {
-    // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Use our shader
-    glUseProgram(programID);
-
-    // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, mainbo);
-    glVertexAttribPointer(
-        0,        // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,        // size
-        GL_FLOAT, // type
-        GL_FALSE, // normalized?
-        0,        // stride
-        (void *)0 // array buffer offset
-    );
-
-    // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, idxMain); // 3 indices starting at 0 -> 1 triangle
-
-    glDisableVertexAttribArray(0);
-
-    // Swap buffers
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-
-  } // Check if the ESC key was pressed or the window was closed
-
-  // Cleanup VBO
-  glDeleteBuffers(1, &mainbo);
-  glDeleteVertexArrays(1, &VertexArrayID);
-  glDeleteProgram(programID);
+  display(window);
 
   // Close OpenGL window and terminate GLFW
   glfwTerminate();
