@@ -59,11 +59,13 @@ void Initialize()
   glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
 }
 
-void printHelp(){
+void printHelp()
+{
+  printf("\033c");
   printf("===============HELP MENU===============\n");
   printf("P : Zoom Out\n");
   printf("O : Zoom In\n");
-  
+
   printf("W : Rotate Model Upward\n");
   printf("S : Rotate Model Downward\n");
   printf("A : Rotate Model To The Left\n");
@@ -76,7 +78,6 @@ void printHelp(){
 
   printf("R : Reset View\n");
   printf("H : Help Menu\n");
-  printf("\n\n");
 }
 
 void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -248,4 +249,3 @@ int main(void)
 
   return 0;
 }
-

@@ -23,10 +23,7 @@ glm::mat4 getProjectionMatrix()
 
 glm::vec3 position = glm::vec3(-3.0f, 3.0f, 3.0f);
 
-float horizontalAngle = 3.14f;
-float verticalAngle = 0.0f;
 float initialFoV = 45.0f;
-
 float speed = 3.0f;
 float mouseSpeed = 0.005f;
 
@@ -52,11 +49,10 @@ void computeMatricesFromInputs()
 		position -= direction * deltaTime * speed;
 	}
 
-	if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		position = glm::vec3(-3.0f, 3.0f, 3.0f);
 	}
-
 
 	float FoV = initialFoV;
 
