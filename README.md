@@ -30,6 +30,14 @@ $ ./main-glfw
 - GLEW (OpenGL Extension Wrangler Library)
 - GLM  (OpenGL Mathematics)
 
+## Hasil model
+
+#### Model tanpa colour shader
+![noShader](./image/Pic1.png)
+
+#### Model dengan colour shader
+![withShader](./image/Pic2.png)
+
 ### Operasi yang dapat digunakan :
 | Key | Action                         |
 |-----|--------------------------------|
