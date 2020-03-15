@@ -26,7 +26,7 @@ int theta = 0;
 
 bool isShadersOn = false;
 
-glm::mat4 ModelMatrix = glm::mat4(1.0);;
+glm::mat4 ModelMatrix = glm::mat4(1.0);
 
 void tokenize(string const &str, const char delim, float out[])
 {
@@ -87,6 +87,10 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
   case GLFW_KEY_W:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     break;
+  // case GLFW_KEY_R:
+  //   isShadersOn = false;
+  //   ModelMatrix = glm::mat4(1.0);
+  //   break;
   default:
     break;
   }

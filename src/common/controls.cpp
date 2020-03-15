@@ -53,6 +53,12 @@ void computeMatricesFromInputs()
 		position -= direction * deltaTime * speed;
 	}
 
+	if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		position = glm::vec3(-3.0f, 3.0f, 3.0f);
+	}
+
+
 	float FoV = initialFoV;
 
 	ProjectionMatrix = glm::perspective(glm::radians(FoV), 1.0f, 0.1f, 100.0f);
