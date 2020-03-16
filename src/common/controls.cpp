@@ -55,6 +55,7 @@ GLfloat phi = 0.0f;
 float angle = 0.0;
 
 glm::vec3 position = glm::vec3(PosX, PosY, PosZ);
+glm::vec3 direction = glm::vec3(0.5f, -0.5f, -0.5f);
 
 float initialFoV = 45.0f;
 float speed = 3.0f;
@@ -69,7 +70,7 @@ void computeMatricesFromInputs()
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
-	glm::vec3 direction(DirX, DirY, DirZ);
+	// glm::vec3 direction(DirX, DirY, DirZ);
 	glm::vec3 right(RightX, RightY, RightZ);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -90,6 +91,7 @@ void computeMatricesFromInputs()
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		position = glm::vec3(-3.0f, 3.0f, 3.0f);
+		direction = glm::vec3(0.5f, -0.5f, -0.5f);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
