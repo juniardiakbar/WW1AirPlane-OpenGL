@@ -21,7 +21,41 @@ glm::mat4 getProjectionMatrix()
 	return ProjectionMatrix;
 }
 
-glm::vec3 position = glm::vec3(-3.0f, 3.0f, 3.0f);
+
+GLfloat initPosX = -3.0f;
+GLfloat initPosY = 3.0f;
+GLfloat initPosZ = 3.0f;
+
+GLfloat initDirX = 0.5f;
+GLfloat initDirY = -0.5f;
+GLfloat initDirZ = -0.5f;
+
+GLfloat initRightX = 0.5f;
+GLfloat initRightY = 0.0f;
+GLfloat initRightZ = 1.0f;
+
+GLfloat initTheta = 0.0f;
+GLfloat initPhi = 0.0f;
+
+GLfloat PosX = initPosX;
+GLfloat PosY = initPosY;
+GLfloat PosZ = initPosZ;
+
+GLfloat DirX = initDirX;
+GLfloat DirY = initDirY;
+GLfloat DirZ = initDirZ;
+
+GLfloat RightX = initRightX;
+GLfloat RightY = initRightY;
+GLfloat RightZ = initRightZ;
+
+GLfloat theta2 = 0.0f;
+GLfloat phi = 0.0f;
+
+// angle of rotation for the camera direction
+float angle = 0.0;
+
+glm::vec3 position = glm::vec3(PosX, PosY, PosZ);
 
 float initialFoV = 45.0f;
 float speed = 3.0f;
@@ -34,9 +68,9 @@ void computeMatricesFromInputs()
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
 
-	glm::vec3 direction(0.5f, -0.5f, -0.5f);
-	glm::vec3 right(0.5f, 0, 1.0f);
-	glm::vec3 up = glm::cross(right, direction);
+	glm::vec3 direction(DirX, DirY, DirZ);
+	glm::vec3 right(RightX, RightY, RightZ);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	// Move forward
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
@@ -49,9 +83,49 @@ void computeMatricesFromInputs()
 		position += direction * deltaTime * speed;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		position = glm::vec3(-3.0f, 3.0f, 3.0f);
+		//up = glm::cross(right, direction);
+		//cout << "DirX Origin " << DirX << endl;		
+		angle += 0.01f;
+		DirX = sin(angle);
+		//cout << "DirX 1 " << DirX << endl;
+		DirZ = -cos(angle);
+		//float dX = DirX;
+		//float dZ = DirZ;
+		//float pX = PosX;
+		//float pZ = PosZ;
+		//DirX = dX + PosX;
+		//DirZ = dZ + PosZ;
+		//cout << "DirX 2 " << DirX << endl;
+		position = glm::vec3(PosX, PosY, PosZ);
+		direction = glm::vec3(DirX, DirY, DirZ);
+		direction = direction + position;
+		//DirX += PosX;
+		//DirZ += PosZ;
+		//DirY += PosY;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		//up = glm::cross(right, direction);
+		//cout << "DirX Origin " << DirX << endl;		
+		angle += 0.01f;
+		DirX = sin(angle);
+		//cout << "DirX 1 " << DirX << endl;
+		DirZ = -cos(angle);
+		//float dX = DirX;
+		//float dZ = DirZ;
+		//float pX = PosX;
+		//float pZ = PosZ;
+		//DirX = dX + PosX;
+		//DirZ = dZ + PosZ;
+		//cout << "DirX 2 " << DirX << endl;
+		position = glm::vec3(PosX, PosY, PosZ);
+		direction = glm::vec3(DirX, DirY, DirZ);
+		direction = direction + position;
+		//DirX += PosX;
+		//DirZ += PosZ;
+		//DirY += PosY;
 	}
 
 	float FoV = initialFoV;
