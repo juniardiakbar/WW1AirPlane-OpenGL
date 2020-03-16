@@ -41,12 +41,12 @@ void computeMatricesFromInputs()
 	// Move forward
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
 	{
-		position += direction * deltaTime * speed;
+		position -= direction * deltaTime * speed;
 	}
 	// Move backward
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
-		position -= direction * deltaTime * speed;
+		position += direction * deltaTime * speed;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
