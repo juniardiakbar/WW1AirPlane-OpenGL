@@ -88,10 +88,10 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
-  case GLFW_KEY_K:
+  case GLFW_KEY_X:
     isShadersOn = false;
     break;
-  case GLFW_KEY_L:
+  case GLFW_KEY_Z:
     isShadersOn = true;
     break;
   case GLFW_KEY_D:
