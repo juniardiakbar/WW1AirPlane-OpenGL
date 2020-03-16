@@ -15,12 +15,8 @@ using namespace glm;
 
 GLFWwindow *window;
 
-int th = 32;
-int ph = 8;
-int zh = 0;
 int asp = 1;
 int rotate_speed = 25;
-float zoom = 1.0;
 float dim = 1.0;
 int theta = 0;
 
@@ -44,19 +40,12 @@ void tokenize(string const &str, const char delim, float out[])
 
 void Initialize()
 {
-  glfwPollEvents();
-  glfwSetCursorPos(window, 1024 / 2, 768 / 2);
-
-  // // Enable depth test
-  // glEnable(GL_DEPTH_TEST);
-  // // Accept fragment if it closer to the camera than the former one
-  // glDepthFunc(GL_LESS);
-
-  // // Cull triangles which normal is not towards the camera
-  // glEnable(GL_CULL_FACE);
-
   glClearColor(1, 1, 1, 0.0);
-  glOrtho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
+
+  // Enable depth test
+  glEnable(GL_DEPTH_TEST);
+  // Accept fragment if it closer to the camera than the former one
+  glDepthFunc(GL_LESS);
 }
 
 void printHelp()
@@ -132,7 +121,7 @@ void display(GLFWwindow *window)
 
   // Create and compile our GLSL program from the shaders
   GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
-  GLuint defaultID = LoadShaders("SimpleVertexShader.vertexshader", "DefaultFragment.fragmentshader");
+  GLuint defaultID = LoadShaders("DefaultFragment.vertexshader", "DefaultFragment.fragmentshader");
 
   GLuint MatrixID = glGetUniformLocation(programID, "MVP");
   GLuint DefaultMatrixID = glGetUniformLocation(defaultID, "MVP");
@@ -159,15 +148,41 @@ void display(GLFWwindow *window)
 
   MyReadFile.close();
 
-  GLuint mainbo = 0;
+  MyReadFile.open("color.txt");
+  GLfloat pointsColor[2048];
+
+  int idxColor = 0;
+  while (!MyReadFile.eof())
+  {
+    string point;
+    float out[3];
+
+    getline(MyReadFile, point);
+    tokenize(point, ',', out);
+
+    for (int j = 0; j < 3; j++)
+    {
+      pointsColor[idxColor] = out[j];
+      idxColor++;
+    }
+  }
+
+  MyReadFile.close();
+
+  GLuint mainbo;
   glGenBuffers(1, &mainbo);
   glBindBuffer(GL_ARRAY_BUFFER, mainbo);
   glBufferData(GL_ARRAY_BUFFER, idxMain * sizeof(float), pointsMain, GL_STATIC_DRAW);
 
+  GLuint colorbo;
+  glGenBuffers(1, &colorbo);
+  glBindBuffer(GL_ARRAY_BUFFER, colorbo);
+  glBufferData(GL_ARRAY_BUFFER, idxColor * sizeof(float), pointsColor, GL_STATIC_DRAW);
+
   while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
   {
     // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (isShadersOn)
     {
@@ -196,15 +211,32 @@ void display(GLFWwindow *window)
         0,
         (void *)0);
 
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbo);
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void *)0);
+
     glDrawArrays(GL_TRIANGLES, 0, idxMain);
 
     glDisableVertexAttribArray(0);
+    // glDisableVertexAttribArray(1);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
 
     glfwSetKeyCallback(window, SpecialKey);
   }
+
+  glDeleteBuffers(1, &mainbo);
+  glDeleteBuffers(1, &colorbo);
+  glDeleteProgram(programID);
+  glDeleteProgram(defaultID);
+  glDeleteVertexArrays(1, &VertexArrayID);
 }
 
 int main(void)
@@ -243,7 +275,6 @@ int main(void)
   }
 
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   Initialize();
 

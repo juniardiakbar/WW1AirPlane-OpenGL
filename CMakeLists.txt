@@ -51,6 +51,7 @@ add_executable(main-glfw
 	src/SimpleFragmentShader.fragmentshader
 	src/SimpleVertexShader.vertexshader
 	src/DefaultFragment.fragmentshader
+	src/DefaultFragment.vertexshader
 	src/common/shader.cpp
 	src/common/controls.cpp
 )
