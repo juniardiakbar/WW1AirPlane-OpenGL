@@ -90,7 +90,7 @@ void computeMatricesFromInputs()
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		position = glm::vec3(-3.0f, 3.0f, 3.0f);
-	} 
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
@@ -142,14 +142,6 @@ void computeMatricesFromInputs()
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
 
-		// cout << "J " << theta2 << " " << " " << pX << " " << pY << " "
-		// 		 << " " << pZ << endl;
-
-		cout << "J "
-				 << " " << position[0] << " " << position[1] << " " << position[2] << endl;
-		cout << "J-D "
-				 << " " << direction[0] << " " << direction[1] << " " << direction[2] << endl;
-
 		position = glm::vec3(pX, pY, pZ);
 		func3 = true;
 	}
@@ -177,16 +169,8 @@ void computeMatricesFromInputs()
 
 	ViewMatrix = glm::lookAt(
 			position,
-			position + direction,
+			direction,
 			up);
-
-	if (func3)
-	{
-		ViewMatrix = glm::lookAt(
-				position,
-				direction,
-				up);
-	}
 
 	lastTime = currentTime;
 }
