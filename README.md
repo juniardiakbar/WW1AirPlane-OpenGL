@@ -52,7 +52,7 @@ $ ./main-glfw
 | J         | Rotate Kamera mengitari model pada bidang orthogonal Counter Clockwise                                                 |
 | L         | Rotate Kamera mengitari model pada bidang orthogonal Clockwise                                                         |
 | LEFT_KEY  | Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas  kamera pada bidang proyeksi Counter Clockwise |
-| RIGHT_KEY | Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas  kamera pada bidang proyeksi Counter           |
+| RIGHT_KEY | Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas  kamera pada bidang proyeksi Clockwise         |
 | Z         | Turn On Colour Shader                                                                                                  |
 | X         | Turn Off Colour Shader                                                                                                 |
 | R         | Reset View                                                                                                             |
