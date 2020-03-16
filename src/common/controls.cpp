@@ -140,10 +140,10 @@ void computeMatricesFromInputs()
 		cout << "pX " << pX << endl;
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
-		cout << "DirX " << DirX << endl;
-		cout << "PosY " << PosY << endl;
-		cout << "pY " << pY << endl;
-		cout << "pZ " << pZ << endl;
+		//cout << "DirX " << DirX << endl;
+		//cout << "PosY " << PosY << endl;
+		//cout << "pY " << pY << endl;
+		//cout << "pZ " << pZ << endl;
 
 		position = glm::vec3(pX, pY, pZ);
 		
@@ -161,10 +161,10 @@ void computeMatricesFromInputs()
 		cout << "pX " << pX << endl;
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
-		cout << "DirX " << DirX << endl;
-		cout << "PosY " << PosY << endl;
-		cout << "pY " << pY << endl;
-		cout << "pZ " << pZ << endl;
+		// cout << "DirX " << DirX << endl;
+		// cout << "PosY " << PosY << endl;
+		// cout << "pY " << pY << endl;
+		// cout << "pZ " << pZ << endl;
 
 		position = glm::vec3(pX, pY, pZ);
 		
