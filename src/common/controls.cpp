@@ -129,20 +129,13 @@ void computeMatricesFromInputs()
 	}
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
 	{
-		//up = glm::vec3(0.0f, 1.0f, 0.0f);
 		theta2 = theta2 - 0.01f;
 		float pX = PosX;
 		float pY = PosY;
 		float pZ = PosZ;
 
 		GLfloat radius = sqrt(pX*pX + pY*pY + pZ*pZ);
-		//GLfloat radius = sqrt(PosX*PosX + PosY*PosY + PosZ*PosZ);
-		//cout << "radius " << radius << endl;
-		//PosX = radius * cos(0.0f) * sin(theta2);
-		//cout << "sin " << sin(theta2) << endl;
-		//cout << "PosX " << PosX << endl;
-		//PosY = radius * sin(0.0f) * sin(theta2);
-		//PosZ = radius * cos(theta2);
+		
 		pX = DirX + radius * cos(0.0f) * sin(theta2);
 		cout << "pX " << pX << endl;
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
@@ -158,21 +151,13 @@ void computeMatricesFromInputs()
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
 	{
-		//up = glm::vec3(0.0f, 1.0f, 0.0f);
 		theta2 = theta2 + 0.01f;
 		float pX = PosX;
 		float pY = PosY;
 		float pZ = PosZ;
 
 		GLfloat radius = sqrt(pX*pX + pY*pY + pZ*pZ);
-		//GLfloat radius = sqrt(PosX*PosX + PosY*PosY + PosZ*PosZ);
-		//cout << "radius " << radius << endl;
-		//PosX = radius * cos(0.0f) * sin(theta2);
-		//cout << "sin " << sin(theta2) << endl;
-		//cout << "PosX " << PosX << endl;
-		//PosY = radius * sin(0.0f) * sin(theta2);
-		//PosZ = radius * cos(theta2);
-		pX = DirX + radius * cos(0.0f) * sin(theta2);
+		
 		cout << "pX " << pX << endl;
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
