@@ -114,7 +114,7 @@ void computeMatricesFromInputs()
 
 		DirZ -= -cos(angle) + 1;
 
-		direction = glm::vec3(DirX, DirY, DirZ);
+		//direction = glm::vec3(DirX, DirY, DirZ);
 		func3 = false;
 	}
 
@@ -132,7 +132,7 @@ void computeMatricesFromInputs()
 		}
 		DirZ += -cos(angle) + 1;
 
-		direction = glm::vec3(DirX, DirY, DirZ);
+		//direction = glm::vec3(DirX, DirY, DirZ);
 		func3 = false;
 	}
 
