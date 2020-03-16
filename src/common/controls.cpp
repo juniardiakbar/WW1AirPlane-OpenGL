@@ -21,7 +21,6 @@ glm::mat4 getProjectionMatrix()
 	return ProjectionMatrix;
 }
 
-
 GLfloat initPosX = -3.0f;
 GLfloat initPosY = 3.0f;
 GLfloat initPosZ = 3.0f;
@@ -61,6 +60,8 @@ float initialFoV = 45.0f;
 float speed = 3.0f;
 float mouseSpeed = 0.005f;
 
+bool func3 = false;
+
 void computeMatricesFromInputs()
 {
 	static double lastTime = glfwGetTime();
@@ -76,57 +77,52 @@ void computeMatricesFromInputs()
 	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
 	{
 		position -= direction * deltaTime * speed;
+		func3 = false;
 	}
 	// Move backward
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
 		position += direction * deltaTime * speed;
+		func3 = false;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
-		//up = glm::cross(right, direction);
-		//cout << "DirX Origin " << DirX << endl;		
-		angle += 0.01f;
-		DirX = sin(angle);
-		//cout << "DirX 1 " << DirX << endl;
-		DirZ = -cos(angle);
-		//float dX = DirX;
-		//float dZ = DirZ;
-		//float pX = PosX;
-		//float pZ = PosZ;
-		//DirX = dX + PosX;
-		//DirZ = dZ + PosZ;
-		//cout << "DirX 2 " << DirX << endl;
-		position = glm::vec3(PosX, PosY, PosZ);
+		angle -= 0.003f;
+
+		if (angle > 0)
+		{
+			DirX -= sin(angle);
+		}
+		else
+		{
+			DirX += sin(angle);
+		}
+
+		DirZ -= -cos(angle) + 1;
+
 		direction = glm::vec3(DirX, DirY, DirZ);
-		direction = direction + position;
-		//DirX += PosX;
-		//DirZ += PosZ;
-		//DirY += PosY;
+		func3 = false;
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
-		//up = glm::cross(right, direction);
-		//cout << "DirX Origin " << DirX << endl;		
-		angle += 0.01f;
-		DirX = sin(angle);
-		//cout << "DirX 1 " << DirX << endl;
-		DirZ = -cos(angle);
-		//float dX = DirX;
-		//float dZ = DirZ;
-		//float pX = PosX;
-		//float pZ = PosZ;
-		//DirX = dX + PosX;
-		//DirZ = dZ + PosZ;
-		//cout << "DirX 2 " << DirX << endl;
-		position = glm::vec3(PosX, PosY, PosZ);
+		angle += 0.003f;
+
+		if (angle < 0)
+		{
+			DirX -= sin(angle);
+		}
+		else
+		{
+			DirX += sin(angle);
+		}
+		DirZ += -cos(angle) + 1;
+
 		direction = glm::vec3(DirX, DirY, DirZ);
-		direction = direction + position;
-		//DirX += PosX;
-		//DirZ += PosZ;
-		//DirY += PosY;
+		func3 = false;
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
 	{
 		theta2 = theta2 - 0.01f;
@@ -134,21 +130,24 @@ void computeMatricesFromInputs()
 		float pY = PosY;
 		float pZ = PosZ;
 
-		GLfloat radius = sqrt(pX*pX + pY*pY + pZ*pZ);
-		
+		GLfloat radius = sqrt(pX * pX + pY * pY + pZ * pZ);
+
 		pX = DirX + radius * cos(0.0f) * sin(theta2);
-		cout << "pX " << pX << endl;
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
-		//cout << "DirX " << DirX << endl;
-		//cout << "PosY " << PosY << endl;
-		//cout << "pY " << pY << endl;
-		//cout << "pZ " << pZ << endl;
+
+		// cout << "J " << theta2 << " " << " " << pX << " " << pY << " "
+		// 		 << " " << pZ << endl;
+
+		cout << "J "
+				 << " " << position[0] << " " << position[1] << " " << position[2] << endl;
+		cout << "J-D "
+				 << " " << direction[0] << " " << direction[1] << " " << direction[2] << endl;
 
 		position = glm::vec3(pX, pY, pZ);
-		
-
+		func3 = true;
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
 	{
 		theta2 = theta2 + 0.01f;
@@ -156,30 +155,32 @@ void computeMatricesFromInputs()
 		float pY = PosY;
 		float pZ = PosZ;
 
-		GLfloat radius = sqrt(pX*pX + pY*pY + pZ*pZ);
-		
-		cout << "pX " << pX << endl;
+		GLfloat radius = sqrt(pX * pX + pY * pY + pZ * pZ);
+
+		pX = DirX + radius * cos(0.0f) * sin(theta2);
 		pY = DirY + radius * sin(0.0f) * sin(theta2);
 		pZ = DirX + radius * cos(theta2);
-		// cout << "DirX " << DirX << endl;
-		// cout << "PosY " << PosY << endl;
-		// cout << "pY " << pY << endl;
-		// cout << "pZ " << pZ << endl;
 
 		position = glm::vec3(pX, pY, pZ);
-		
-
+		func3 = true;
 	}
 
 	float FoV = initialFoV;
 
 	ProjectionMatrix = glm::perspective(glm::radians(FoV), 1.0f, 0.1f, 100.0f);
 
-	// Camera matrix
 	ViewMatrix = glm::lookAt(
 			position,
-			direction,
+			position + direction,
 			up);
+
+	if (func3)
+	{
+		ViewMatrix = glm::lookAt(
+				position,
+				direction,
+				up);
+	}
 
 	lastTime = currentTime;
 }

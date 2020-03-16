@@ -88,12 +88,12 @@ void SpecialKey(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   switch (key)
   {
-  case GLFW_KEY_K:
-    isShadersOn = false;
-    break;
-  case GLFW_KEY_L:
-    isShadersOn = true;
-    break;
+  // case GLFW_KEY_K:
+  //   isShadersOn = false;
+  //   break;
+  // case GLFW_KEY_L:
+  //   isShadersOn = true;
+  //   break;
   case GLFW_KEY_D:
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     break;
