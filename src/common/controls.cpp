@@ -138,9 +138,9 @@ void computeMatricesFromInputs()
 
 		GLfloat radius = sqrt(pX * pX + pY * pY + pZ * pZ);
 
-		pX = DirX + radius * cos(0.0f) * sin(theta2);
-		pY = DirY + radius * sin(0.0f) * sin(theta2);
-		pZ = DirX + radius * cos(theta2);
+		pX = direction[0] + radius * cos(0.0f) * sin(theta2);
+		pY = direction[1] + radius * sin(0.0f) * sin(theta2);
+		pZ = direction[2] + radius * cos(theta2);
 
 		position = glm::vec3(pX, pY, pZ);
 		func3 = true;
@@ -155,9 +155,9 @@ void computeMatricesFromInputs()
 
 		GLfloat radius = sqrt(pX * pX + pY * pY + pZ * pZ);
 
-		pX = DirX + radius * cos(0.0f) * sin(theta2);
-		pY = DirY + radius * sin(0.0f) * sin(theta2);
-		pZ = DirX + radius * cos(theta2);
+		pX = direction[0] + radius * cos(0.0f) * sin(theta2);
+		pY = direction[1] + radius * sin(0.0f) * sin(theta2);
+		pZ = direction[2] + radius * cos(theta2);
 
 		position = glm::vec3(pX, pY, pZ);
 		func3 = true;
