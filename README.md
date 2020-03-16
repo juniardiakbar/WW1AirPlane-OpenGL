@@ -39,21 +39,25 @@ $ ./main-glfw
 ![withShader](./image/Pic2.png)
 
 ### Operasi yang dapat digunakan :
-| Key | Action                         |
-|-----|--------------------------------|
-| O   | Zoom Out                       |
-| P   | Zoom In                        |
-| W   | Rotate Model Upward            |
-| S   | Rotate Model Downward          |
-| A   | Rotate Model To The Left       |
-| D   | Rotate Model To The Right      |
-| Q   | Rotate Model Counter Clockwise |
-| E   | Rotate Model Clockwise         |
-| L   | Turn On Colour Shader          |
-| K   | Turn Off Colour Shader         |
-| R   | Reset View                     |
-| T   | Reset Model                    |
-| H   | Help Menu                      |
+| Key       | Action                                                                                                                 |
+|-----------|------------------------------------------------------------------------------------------------------------------------|
+| O         | Zoom Out                                                                                                               |
+| P         | Zoom In                                                                                                                |
+| W         | Rotate Model Upward                                                                                                    |
+| S         | Rotate Model Downward                                                                                                  |
+| A         | Rotate Model To The Left                                                                                               |
+| D         | Rotate Model To The Right                                                                                              |
+| Q         | Rotate Model Counter Clockwise                                                                                         |
+| E         | Rotate Model Clockwise                                                                                                 |
+| J         | Rotate Kamera mengitari model pada bidang orthogonal Counter Clockwise                                                 |
+| L         | Rotate Kamera mengitari model pada bidang orthogonal Clockwise                                                         |
+| LEFT_KEY  | Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas  kamera pada bidang proyeksi Counter Clockwise |
+| RIGHT_KEY | Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas  kamera pada bidang proyeksi Counter           |
+| Z         | Turn On Colour Shader                                                                                                  |
+| X         | Turn Off Colour Shader                                                                                                 |
+| R         | Reset View                                                                                                             |
+| T         | Reset Model                                                                                                            |
+| H         | Help Menu                                                                                                              |
 
 ## Credits
 - 13517057 | Ainun Fitryh Vianiryzki

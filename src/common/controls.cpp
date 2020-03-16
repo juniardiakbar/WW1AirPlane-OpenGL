@@ -83,6 +83,12 @@ void computeMatricesFromInputs()
 		position += direction * deltaTime * speed;
 	}
 
+	//Reset view
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		position = glm::vec3(-3.0f, 3.0f, 3.0f);
+	} 
+
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
 		//up = glm::cross(right, direction);
