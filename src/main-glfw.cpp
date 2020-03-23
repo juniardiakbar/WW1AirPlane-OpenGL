@@ -52,8 +52,8 @@ void printHelp()
 {
   printf("\033c");
   printf("===============HELP MENU===============\n");
-  printf("P : Zoom Out\n");
-  printf("O : Zoom In\n");
+  printf("O : Zoom Out\n");
+  printf("P : Zoom In\n\n");
 
   printf("=====Rotate Model=====\n");
   printf("W : Rotate Model Upward\n");
@@ -63,9 +63,18 @@ void printHelp()
   printf("Q : Rotate Model Counter Clockwise\n");
   printf("E : Rotate Model Clockwise\n\n");
 
+  printf("=====Rotate Camera=====\n");
+  printf("J : Rotate Kamera mengitari model pada bidang orthogonal Counter Clockwise\n");
+  printf("L : Rotate Kamera mengitari model pada bidang orthogonal Clockwise\n\n");
+
+  printf("=====Rotate Camera=====\n");
+  printf("LEFT_KEY : Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas kamera pada bidang proyeksi Counter Clockwise\n");
+  printf("RIGHT_KEY : Rotate bidang proyeksi dengan memutar vektor yang menunjukkan arah atas kamera pada bidang proyeksi Clockwise\n\n");
+
+
   printf("=====Colour Shader=====\n");
-  printf("L : Turn On Colour Shader\n");
-  printf("K : Turn Off Colour Shader\n\n");
+  printf("Z : Turn On Colour Shader\n");
+  printf("X : Turn Off Colour Shader\n\n");
 
   printf("=====Setting=====\n");
   printf("R : Reset View\n");
